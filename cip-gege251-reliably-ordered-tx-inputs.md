@@ -15,17 +15,15 @@ License: Apache-2.0
 
 ## Abstract
 
-This CIP proposes a way to improve efficiency of handling transaction inputs in Plutus scripts by changing the way they are representend in the ledger.
+This CIP proposes a way to improve efficiency of handling transaction inputs in Plutus scripts by changing the way they are represented in the ledger.
 
 ## Motivation
 
-The current implementation of the transaction body stores transaction inputs as a set. When interacting with transaction inputs inside a validator script, this representation changes to a linked list, but the ordering of the transaction inputs is different than that of the originally submitted transaction's. In the case when we want to find a certain transaction input on chain, we need to do a costly filtering on the input list with the worst case of O(n).
-However if the transaction inputs would be stored as an array, preserving the original ordering, we could better optimise our scripts by determining the order of inputs off-chain and simplifying the search to a pattern match.
-For example, for a script needing transaction inputs for two purposes: one for updating the datum of the script, and one or more for supplying the funds. We could order these inputs such that the one including the datum comes first, and then we can use a pattern match `txWithDatum : txWithFunds = txInfoInputs`.
+The current implementation of the transaction body stores transaction inputs as a set. When interacting with transaction inputs inside a validator script, this representation changes to a linked list, but the ordering of the transaction inputs is different than that of the originally submitted transaction's. In the case when we want to find a certain transaction input on chain, we need to do a costly filtering on the input list with the worst case of O(n). However if the transaction inputs would be stored as an array, preserving the original ordering, we could better optimise our scripts by determining the order of inputs off-chain and simplifying the search to a pattern match. For example, for a script needing transaction inputs for two purposes: one for updating the datum of the script, and one or more for supplying the funds. We could order these inputs such that the one including the datum comes first, and then we can use a pattern match `txWithDatum : txWithFunds = txInfoInputs`.
 
 ## Specification
 
-In the CDDL definiotion of the transaction body, transaction inputs will need to be changed from Set to Array:
+In the CDDL definition of the transaction body, transaction inputs will need to be changed from Set to Array:
 
 ```
 transaction_body =
@@ -46,7 +44,7 @@ transaction_body =
  }
 ```
 
-Note that the Set is defined in the cardano-ledger specification as an Array of zero or more elements `set = [* a]`, so this would only cause a semantic change, without the actual change of the underlying data structure.
+Note that the Set is defined in the `cardano-ledger` specification as an Array of zero or more elements `set = [* a]`, so this would only cause a semantic change, without the actual change of the underlying data structure.
 
 ## Rationale
 
